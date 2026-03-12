@@ -102,12 +102,15 @@ export function initDb() {
     )
   `);
 
-  // Gallery
+  // Gallery (stores image metadata from Vercel Blob)
   database.exec(`
     CREATE TABLE IF NOT EXISTS gallery (
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL,
       url TEXT NOT NULL,
+      fileSize INTEGER,
+      contentType TEXT,
+      uploadedBy TEXT DEFAULT 'admin',
       createdAt TEXT NOT NULL
     )
   `);

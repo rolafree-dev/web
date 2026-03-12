@@ -88,16 +88,19 @@ export function CompetitorForm({ initialData }: CompetitorFormProps) {
       let finalImageUrl = values.imageUrl || "";
 
       if (imageFile) {
-        // Crear FormData para upload
+        // Upload to Vercel Blob
         const formData = new FormData();
         formData.append('file', imageFile);
         
-        const uploadRes = await fetch('/api/upload', {
+        const uploadRes = await fetch('/api/upload-vercel', {
           method: 'POST',
           body: formData,
         });
         
-        if (!uploadRes.ok) throw new Error('Upload failed');
+        if (!uploadRes.ok) {
+          const error = await uploadRes.json();
+          throw new Error(error.error || 'Upload failed');
+        }
         const uploadData = await uploadRes.json();
         finalImageUrl = uploadData.url;
       }
