@@ -11,12 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 export async function addCompetitor(data: any) {
   const { data: result, error } = await supabase
     .from('competitors')
-    .insert([{
-      id: uuidv4(),
-      ...data,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }])
+    .insert([data])
     .select();
 
   if (error) throw new Error(error.message);
@@ -73,12 +68,7 @@ export async function getCompetitors() {
 export async function addRola(data: any) {
   const { data: result, error } = await supabase
     .from('rolas')
-    .insert([{
-      id: uuidv4(),
-      ...data,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }])
+    .insert([data])
     .select();
 
   if (error) throw new Error(error.message);
@@ -133,19 +123,22 @@ export async function getRolas() {
 // ============== TOURNAMENTS ==============
 
 export async function addTournament(data: any) {
+  const tournamentData = {
+    ...data,
+    bracket: data.bracket ? JSON.stringify(data.bracket) : undefined,
+  };
+
   const { data: result, error } = await supabase
     .from('tournaments')
-    .insert([{
-      id: uuidv4(),
-      bracket: JSON.stringify(data.bracket || {}),
-      ...data,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }])
+    .insert([tournamentData])
     .select();
 
   if (error) throw new Error(error.message);
-  return result?.[0];
+  const inserted = result?.[0];
+  if (inserted?.bracket && typeof inserted.bracket === 'string') {
+    inserted.bracket = JSON.parse(inserted.bracket);
+  }
+  return inserted;
 }
 
 export async function updateTournament(id: string, data: any) {
@@ -209,11 +202,7 @@ export async function getTournaments() {
 export async function addEvent(data: any) {
   const { data: result, error } = await supabase
     .from('events')
-    .insert([{
-      id: uuidv4(),
-      ...data,
-      createdAt: new Date().toISOString(),
-    }])
+    .insert([data])
     .select();
 
   if (error) throw new Error(error.message);
@@ -305,11 +294,7 @@ export async function updateSetting(key: string, value: any) {
 export async function addGalleryImage(data: any) {
   const { data: result, error } = await supabase
     .from('gallery')
-    .insert([{
-      id: uuidv4(),
-      ...data,
-      createdAt: new Date().toISOString(),
-    }])
+    .insert([data])
     .select();
 
   if (error) throw new Error(error.message);
