@@ -9,9 +9,16 @@ import { v4 as uuidv4 } from 'uuid';
 // ============== COMPETITORS ==============
 
 export async function addCompetitor(data: any) {
+  const competitorData = {
+    id: data.id || uuidv4(),
+    ...data,
+    createdAt: data.createdAt || new Date().toISOString(),
+    updatedAt: data.updatedAt || new Date().toISOString(),
+  };
+
   const { data: result, error } = await supabase
     .from('competitors')
-    .insert([data])
+    .insert([competitorData])
     .select();
 
   if (error) throw new Error(error.message);
@@ -66,9 +73,16 @@ export async function getCompetitors() {
 // ============== ROLAS ==============
 
 export async function addRola(data: any) {
+  const rolaData = {
+    id: data.id || uuidv4(),
+    ...data,
+    createdAt: data.createdAt || new Date().toISOString(),
+    updatedAt: data.updatedAt || new Date().toISOString(),
+  };
+
   const { data: result, error } = await supabase
     .from('rolas')
-    .insert([data])
+    .insert([rolaData])
     .select();
 
   if (error) throw new Error(error.message);
@@ -124,8 +138,11 @@ export async function getRolas() {
 
 export async function addTournament(data: any) {
   const tournamentData = {
+    id: data.id || uuidv4(),
     ...data,
     bracket: data.bracket ? JSON.stringify(data.bracket) : undefined,
+    createdAt: data.createdAt || new Date().toISOString(),
+    updatedAt: data.updatedAt || new Date().toISOString(),
   };
 
   const { data: result, error } = await supabase
@@ -200,9 +217,15 @@ export async function getTournaments() {
 // ============== EVENTS ==============
 
 export async function addEvent(data: any) {
+  const eventData = {
+    id: data.id || uuidv4(),
+    ...data,
+    createdAt: data.createdAt || new Date().toISOString(),
+  };
+
   const { data: result, error } = await supabase
     .from('events')
-    .insert([data])
+    .insert([eventData])
     .select();
 
   if (error) throw new Error(error.message);
