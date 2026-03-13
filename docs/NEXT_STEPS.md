@@ -115,10 +115,9 @@ Archivos que aún usan SQLite:
 
 ### Configurar RLS (Row Level Security) en Supabase
 
-Por ahora sin RLS, cualqu iera con la `anon key` puede ver/editar datos.  
-Si quieres seguridad:
-1. Ve a **Authentication → Policies** en Supabase
-2. Crea políticas por tabla
+✅ **YA CONFIGURADO**: Las políticas RLS están incluidas en los scripts SQL de `SUPABASE_SETUP.md`. Cada tabla tiene políticas básicas que permiten todas las operaciones.
+
+Para desarrollo esto está bien. Para producción, puedes crear políticas más restrictivas basadas en autenticación de usuario.
 
 ---
 

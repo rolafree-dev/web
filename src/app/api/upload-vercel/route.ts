@@ -1,6 +1,6 @@
 import { put } from '@vercel/blob';
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb, initDb } from '@/lib/db';
+import { addGalleryImage, getGalleryImages } from '@/lib/supabase-helpers';
 import { v4 as uuidv4 } from 'uuid';
 
 // Allowed file types (MIME types)
@@ -10,15 +10,13 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 /**
  * POST /api/upload-vercel
  * 
- * Uploads an image to Vercel Blob Storage and stores metadata in SQLite
+ * Uploads an image to Vercel Blob Storage and stores metadata in Supabase
  * 
  * Request body: FormData with 'file' field
  * Response: { url, id, fileName, uploadDate }
  */
 export async function POST(request: NextRequest) {
   try {
-    initDb();
-
     const formData = await request.formData();
     const file = formData.get('file') as File;
 
@@ -56,23 +54,19 @@ export async function POST(request: NextRequest) {
       contentType: file.type,
     });
 
-    // Store metadata in SQLite
-    const db = getDb();
+    // Store metadata in Supabase
     const imageId = uuidv4();
     const now = new Date().toISOString();
 
-    db.prepare(`
-      INSERT INTO gallery (id, name, url, fileSize, contentType, uploadedBy, createdAt)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `).run(
-      imageId,
-      file.name,
-      blob.url,
-      file.size,
-      file.type,
-      'admin',
-      now
-    );
+    await addGalleryImage({
+      id: imageId,
+      name: file.name,
+      url: blob.url,
+      fileSize: file.size,
+      contentType: file.type,
+      uploadedBy: 'admin',
+      createdAt: now,
+    });
 
     // Return the image URL and metadata
     return NextResponse.json({
@@ -94,19 +88,11 @@ export async function POST(request: NextRequest) {
 /**
  * GET /api/upload-vercel
  * 
- * Retrieves all uploaded images from SQLite with their Vercel Blob URLs
+ * Retrieves all uploaded images from Supabase with their Vercel Blob URLs
  */
 export async function GET() {
   try {
-    initDb();
-    const db = getDb();
-    
-    const images = db.prepare(`
-      SELECT id, name, url, fileSize, contentType, uploadedBy, createdAt
-      FROM gallery
-      ORDER BY createdAt DESC
-    `).all() as any[];
-
+    const images = await getGalleryImages();
     return NextResponse.json(images);
   } catch (error: any) {
     return NextResponse.json(

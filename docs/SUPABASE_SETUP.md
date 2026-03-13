@@ -52,6 +52,12 @@ CREATE TABLE IF NOT EXISTS competitors (
 
 CREATE INDEX competitors_name_idx ON competitors(name);
 CREATE INDEX competitors_createdAt_idx ON competitors(createdAt DESC);
+
+-- Habilitar Row Level Security
+ALTER TABLE competitors ENABLE ROW LEVEL SECURITY;
+
+-- Políticas básicas para desarrollo (permitir todo)
+CREATE POLICY "Permitir todo en competitors" ON competitors FOR ALL USING (true);
 ```
 
 ### Crear tabla ROLAS
@@ -75,6 +81,12 @@ CREATE TABLE IF NOT EXISTS rolas (
 );
 
 CREATE INDEX rolas_createdAt_idx ON rolas(createdAt DESC);
+
+-- Habilitar Row Level Security
+ALTER TABLE rolas ENABLE ROW LEVEL SECURITY;
+
+-- Políticas básicas para desarrollo (permitir todo)
+CREATE POLICY "Permitir todo en rolas" ON rolas FOR ALL USING (true);
 ```
 
 ### Crear tabla TOURNAMENTS
@@ -91,6 +103,12 @@ CREATE TABLE IF NOT EXISTS tournaments (
 );
 
 CREATE INDEX tournaments_createdAt_idx ON tournaments(createdAt DESC);
+
+-- Habilitar Row Level Security
+ALTER TABLE tournaments ENABLE ROW LEVEL SECURITY;
+
+-- Políticas básicas para desarrollo (permitir todo)
+CREATE POLICY "Permitir todo en tournaments" ON tournaments FOR ALL USING (true);
 ```
 
 ### Crear tabla EVENTS
@@ -108,6 +126,12 @@ CREATE TABLE IF NOT EXISTS events (
 );
 
 CREATE INDEX events_order_idx ON events("order" ASC);
+
+-- Habilitar Row Level Security
+ALTER TABLE events ENABLE ROW LEVEL SECURITY;
+
+-- Políticas básicas para desarrollo (permitir todo)
+CREATE POLICY "Permitir todo en events" ON events FOR ALL USING (true);
 ```
 
 ### Crear tabla SETTINGS
@@ -120,6 +144,12 @@ CREATE TABLE IF NOT EXISTS settings (
   champions INTEGER DEFAULT 0,
   competitors INTEGER DEFAULT 0
 );
+
+-- Habilitar Row Level Security
+ALTER TABLE settings ENABLE ROW LEVEL SECURITY;
+
+-- Políticas básicas para desarrollo (permitir todo)
+CREATE POLICY "Permitir todo en settings" ON settings FOR ALL USING (true);
 ```
 
 ### Crear tabla GALLERY
@@ -136,16 +166,22 @@ CREATE TABLE IF NOT EXISTS gallery (
 );
 
 CREATE INDEX gallery_createdAt_idx ON gallery(createdAt DESC);
+
+-- Habilitar Row Level Security
+ALTER TABLE gallery ENABLE ROW LEVEL SECURITY;
+
+-- Políticas básicas para desarrollo (permitir todo)
+CREATE POLICY "Permitir todo en gallery" ON gallery FOR ALL USING (true);
 ```
 
-## Paso 4: Configurar permisos (Row Level Security)
+## Paso 4: Las políticas RLS ya están configuradas
 
-Por ahora, desactiva RLS para desarrollo (hazlo después más seguro):
+Las políticas de Row Level Security ya están incluidas en los scripts SQL anteriores. Cada tabla tiene:
 
-1. Ve a **Authentication → Policies**
-2. Para cada tabla:
-   - Abre la tabla
-   - Haz clic en **"Disable RLS"** (o deja sin políticas por ahora)
+- **RLS habilitado**: `ALTER TABLE ... ENABLE ROW LEVEL SECURITY;`
+- **Política básica**: `CREATE POLICY "Permitir todo en ..." ON ... FOR ALL USING (true);`
+
+Esto permite todas las operaciones (SELECT, INSERT, UPDATE, DELETE) en todas las tablas para desarrollo. Para producción, puedes crear políticas más restrictivas basadas en autenticación.
 
 ## Paso 5: Verifica la conexión en tu app
 
